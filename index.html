@@ -100,7 +100,10 @@
                 if (spot.textContent.toLowerCase().includes(searchTerm)) {
                     found = true;
                     const result = document.createElement('p');
-                    result.textContent = `Resultado encontrado: ${spot.textContent}`;
+                    
+                    // Tornando vulnerável a XSS usando innerHTML
+                    result.innerHTML = `Resultado encontrado: ${spot.textContent}`;  // Aqui é onde ocorre a vulnerabilidade
+
                     searchResultsDiv.appendChild(result);
                 }
             });
