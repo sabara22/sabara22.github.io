@@ -66,7 +66,7 @@
         </p>
 
         <h2>Pontos Turísticos</h2>
-        <ul>
+        <ul id="touristSpots">
             <li>Cristo Redentor</li>
             <li>Pão de Açúcar</li>
             <li>Praia de Copacabana</li>
@@ -78,6 +78,8 @@
         <p>
             O Rio de Janeiro foi fundado em 1565 pelos portugueses. Durante muitos anos, foi a capital do Brasil, até a construção de Brasília em 1960. A cidade é um importante centro cultural, econômico e político do país.
         </p>
+
+        <div id="searchResults"></div>
     </div>
 
     <footer>
@@ -86,8 +88,26 @@
 
     <script>
         function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value;
-            document.body.innerHTML += `<p>Resultado da busca: ${searchTerm}</p>`;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const touristSpots = document.querySelectorAll('#touristSpots li');
+            let found = false;
+            const searchResultsDiv = document.getElementById('searchResults');
+
+            // Limpa os resultados anteriores
+            searchResultsDiv.innerHTML = '';
+
+            touristSpots.forEach(spot => {
+                if (spot.textContent.toLowerCase().includes(searchTerm)) {
+                    found = true;
+                    const result = document.createElement('p');
+                    result.textContent = `Resultado encontrado: ${spot.textContent}`;
+                    searchResultsDiv.appendChild(result);
+                }
+            });
+
+            if (!found) {
+                searchResultsDiv.innerHTML = '<p>Nenhum ponto turístico encontrado.</p>';
+            }
         }
     </script>
 </body>
