@@ -1,43 +1,94 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Álbum de Fotos</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rio de Janeiro - Cidade Maravilhosa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #0077b6;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: #0077b6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        footer {
+            background-color: #0077b6;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Rio de Janeiro - Cidade Maravilhosa</h1>
+    </header>
 
-  <!-- Barra de Pesquisa -->
-  <header>
-    <h1>Álbum de Fotos</h1>
-    <input type="text" id="searchBar" placeholder="Pesquisar fotos...">
-  </header>
+    <div class="content">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Pesquisar...">
+            <button onclick="performSearch()">Buscar</button>
+        </div>
 
-  <!-- Galeria de Fotos -->
-  <div id="gallery" class="gallery">
-    <div class="photo-item" data-title="Paisagem">
-      <img src="https://via.placeholder.com/300x200?text=Foto1" alt="Paisagem">
-      <p>Paisagem</p>
-    </div>
-    <div class="photo-item" data-title="Praia">
-      <img src="https://via.placeholder.com/300x200?text=Foto2" alt="Praia">
-      <p>Praia</p>
-    </div>
-    <div class="photo-item" data-title="Montanha">
-      <img src="https://via.placeholder.com/300x200?text=Foto3" alt="Montanha">
-      <p>Montanha</p>
-    </div>
-    <div class="photo-item" data-title="Floresta">
-      <img src="https://via.placeholder.com/300x200?text=Foto4" alt="Floresta">
-      <p>Floresta</p>
-    </div>
-    <div class="photo-item" data-title="Cidade">
-      <img src="https://via.placeholder.com/300x200?text=Foto5" alt="Cidade">
-      <p>Cidade</p>
-    </div>
-  </div>
+        <h2>Sobre o Rio de Janeiro</h2>
+        <p>
+            O Rio de Janeiro é uma grande cidade brasileira à beira-mar, famosa pelas praias de Copacabana e Ipanema, pela estátua de 38 metros de altura do Cristo Redentor, no topo do Corcovado, e pelo Pão de Açúcar, um pico de granito com teleféricos até seu cume. A cidade também é conhecida pelas grandes favelas. O empolgante Carnaval, com carros alegóricos, fantasias extravagantes e sambistas, é considerado o maior do mundo.
+        </p>
 
-  <script src="script.js"></script>
+        <h2>Pontos Turísticos</h2>
+        <ul>
+            <li>Cristo Redentor</li>
+            <li>Pão de Açúcar</li>
+            <li>Praia de Copacabana</li>
+            <li>Praia de Ipanema</li>
+            <li>Floresta da Tijuca</li>
+        </ul>
+
+        <h2>História</h2>
+        <p>
+            O Rio de Janeiro foi fundado em 1565 pelos portugueses. Durante muitos anos, foi a capital do Brasil, até a construção de Brasília em 1960. A cidade é um importante centro cultural, econômico e político do país.
+        </p>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Rio de Janeiro - Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value;
+            document.body.innerHTML += `<p>Resultado da busca: ${searchTerm}</p>`;
+        }
+    </script>
 </body>
 </html>
