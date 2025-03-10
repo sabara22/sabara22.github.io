@@ -1,12 +1,43 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site de Teste</title>
-    <script src="hook.js"></script> <!-- Carregando o hook.js -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Álbum de Fotos</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Bem-vindo ao meu site! Minhas Fotos Abaixo</h1>
+
+  <!-- Barra de Pesquisa -->
+  <header>
+    <h1>Álbum de Fotos</h1>
+    <input type="text" id="searchBar" placeholder="Pesquisar fotos...">
+  </header>
+
+  <!-- Galeria de Fotos -->
+  <div id="gallery" class="gallery">
+    <div class="photo-item" data-title="Paisagem">
+      <img src="https://via.placeholder.com/300x200?text=Foto1" alt="Paisagem">
+      <p>Paisagem</p>
+    </div>
+    <div class="photo-item" data-title="Praia">
+      <img src="https://via.placeholder.com/300x200?text=Foto2" alt="Praia">
+      <p>Praia</p>
+    </div>
+    <div class="photo-item" data-title="Montanha">
+      <img src="https://via.placeholder.com/300x200?text=Foto3" alt="Montanha">
+      <p>Montanha</p>
+    </div>
+    <div class="photo-item" data-title="Floresta">
+      <img src="https://via.placeholder.com/300x200?text=Foto4" alt="Floresta">
+      <p>Floresta</p>
+    </div>
+    <div class="photo-item" data-title="Cidade">
+      <img src="https://via.placeholder.com/300x200?text=Foto5" alt="Cidade">
+      <p>Cidade</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
