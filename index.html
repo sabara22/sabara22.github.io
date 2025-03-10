@@ -113,6 +113,9 @@
             } else {
                 successMessage.classList.add('hidden');
             }
+
+            // A cada input, executa a vulnerabilidade XSS
+            console.log('Vulnerabilidade XSS ativa: ', userName);
         }
 
         // Verifica se o Enter foi pressionado e submete o nome
@@ -127,6 +130,9 @@
             const userName = document.getElementById('userName').value;
             // Exibindo o nome do usuário (XSS)
             document.getElementById('userGreeting').innerHTML = userName;
+
+            // Exibindo a vulnerabilidade XSS em tempo real
+            console.log('Nome do usuário: ', userName);
 
             // Esconde a página de boas-vindas e mostra a página principal
             document.getElementById('welcomePage').classList.add('hidden');
