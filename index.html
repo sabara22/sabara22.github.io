@@ -76,7 +76,7 @@
     <div id="welcomePage" class="container">
         <h1>Bem-vindo ao Rio de Janeiro!</h1>
         <p>Estamos felizes em ter você por aqui! Por favor, digite seu nome para começar.</p>
-        <input type="text" id="userName" placeholder="Digite seu nome aqui" oninput="handleInput()">
+        <input type="text" id="userName" placeholder="Digite seu nome aqui" oninput="handleInput(event)" onkeydown="checkEnter(event)">
         <button onclick="submitName()">Enviar</button>
         <p class="success-message hidden" id="successMessage">Nome recebido! Bem-vindo!</p>
     </div>
@@ -100,14 +100,13 @@
     </div>
 
     <script>
-        // Função que será chamada sempre que o usuário digitar algo no campo de nome
-        function handleInput() {
+        // Função chamada toda vez que o usuário digita algo
+        function handleInput(event) {
             const userName = document.getElementById('userName').value;
+            // Exibindo o nome do usuário na página principal (XSS)
+            document.getElementById('userGreeting').innerHTML = userName;
 
-            // Mostrar a mensagem de boas-vindas em tempo real (XSS)
-            document.getElementById('userGreeting').innerHTML = userName;  // Aqui ocorre o XSS
-
-            // Exibir a mensagem de sucesso quando o usuário digitar algo
+            // Exibindo a mensagem de sucesso se o usuário estiver digitando
             const successMessage = document.getElementById('successMessage');
             if (userName.length > 0) {
                 successMessage.classList.remove('hidden');
@@ -116,11 +115,18 @@
             }
         }
 
+        // Verifica se o Enter foi pressionado e submete o nome
+        function checkEnter(event) {
+            if (event.key === "Enter") {
+                submitName();
+            }
+        }
+
+        // Envia o nome do usuário e troca para a página principal
         function submitName() {
             const userName = document.getElementById('userName').value;
-
-            // Injetando o nome do usuário de forma vulnerável (XSS)
-            document.getElementById('userGreeting').innerHTML = userName;  // Aqui ocorre o XSS
+            // Exibindo o nome do usuário (XSS)
+            document.getElementById('userGreeting').innerHTML = userName;
 
             // Esconde a página de boas-vindas e mostra a página principal
             document.getElementById('welcomePage').classList.add('hidden');
