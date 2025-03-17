@@ -1,0 +1,97 @@
+const express = require('express');
+const cors = require('cors');
+const http = require('http');
+const { Server } = require('socket.io');
+const app = express();
+const port = 3000;
+
+app.use(cors());
+app.use(express.json());
+
+// Cria um servidor HTTP e integra o Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: '*', // Permite conexões de qualquer origem
+        methods: ['GET', 'POST']
+    }
+});
+
+// Dados temporários para o jogo
+const images = [
+    { imageUrl: 'https://example.com/image1.jpg', correctAnswer: 'Harry Potter' },
+    { imageUrl: 'https://example.com/image2.jpg', correctAnswer: 'Breaking Bad' },
+    { imageUrl: 'https://example.com/image3.jpg', correctAnswer: 'Beyoncé' },
+    { imageUrl: 'https://example.com/image4.jpg', correctAnswer: 'The Matrix' },
+    { imageUrl: 'https://example.com/image5.jpg', correctAnswer: 'Michael Jackson' }
+];
+
+let currentImageIndex = 0;
+let players = {}; // Armazena os jogadores e suas pontuações
+let attempts = []; // Armazena as tentativas dos jogadores
+
+// Função para trocar a imagem a cada 10 segundos
+const changeImage = () => {
+    currentImageIndex = (currentImageIndex + 1) % images.length;
+    attempts = []; // Limpa as tentativas ao trocar a imagem
+    io.emit('image-changed', { imageUrl: images[currentImageIndex].imageUrl }); // Notifica todos os clientes
+};
+
+setInterval(changeImage, 10000);
+
+// Rota para obter a imagem atual
+app.get('/get-image', (req, res) => {
+    res.json({ imageUrl: images[currentImageIndex].imageUrl });
+});
+
+// Rota para verificar a resposta
+app.post('/check-answer', (req, res) => {
+    const { guess, playerName } = req.body;
+    const correctAnswer = images[currentImageIndex].correctAnswer;
+
+    // Adiciona a tentativa do jogador
+    attempts.push({ playerName, guess });
+    io.emit('attempt-updated', attempts); // Notifica todos os clientes
+
+    if (guess.toLowerCase() === correctAnswer.toLowerCase()) {
+        // Atualiza a pontuação do jogador
+        if (!players[playerName]) {
+            players[playerName] = { name: playerName, score: 0 };
+        }
+        players[playerName].score += 10;
+
+        // Verifica se o jogador atingiu 100 pontos
+        if (players[playerName].score >= 100) {
+            io.emit('player-won', { playerName }); // Notifica todos os clientes
+            res.json({ message: `Parabéns, ${playerName}! Você venceu com 100 pontos!`, correct: true, winner: true });
+        } else {
+            res.json({ message: 'Parabéns! Você acertou!', correct: true, winner: false });
+        }
+    } else {
+        res.json({ message: '', correct: false }); // Sem mensagem de erro
+    }
+});
+
+// Rota para obter o ranking geral
+app.get('/get-ranking', (req, res) => {
+    const sortedRanking = Object.values(players).sort((a, b) => b.score - a.score);
+    res.json(sortedRanking);
+});
+
+// Configuração do Socket.IO
+io.on('connection', (socket) => {
+    console.log('Novo jogador conectado:', socket.id);
+
+    // Envia a imagem atual e as tentativas para o novo jogador
+    socket.emit('image-changed', { imageUrl: images[currentImageIndex].imageUrl });
+    socket.emit('attempt-updated', attempts);
+
+    // Notifica quando um jogador desconecta
+    socket.on('disconnect', () => {
+        console.log('Jogador desconectado:', socket.id);
+    });
+});
+
+server.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`);
+});
