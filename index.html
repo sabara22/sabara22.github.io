@@ -110,7 +110,7 @@
 
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
-        const socket = io(); // Conecta ao servidor Socket.IO
+        const socket = io('https://cfb4-177-192-8-19.ngrok-free.app'); // Conecta ao servidor Socket.IO
 
         let playerName = localStorage.getItem('playerName') || "Anônimo";
         let score = 0;
