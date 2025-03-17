@@ -87,6 +87,31 @@
         .attempts li {
             margin: 5px 0;
         }
+        .name-input {
+            margin-bottom: 20px;
+        }
+        .name-input input {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+        .name-input button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-left: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .name-input button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -99,6 +124,10 @@
         <ul id="attemptsList"></ul>
     </div>
     <div class="container">
+        <div class="name-input">
+            <input type="text" id="nameInput" placeholder="Digite seu nick">
+            <button onclick="saveName()">Salvar Nick</button>
+        </div>
         <h1>Jogo de Adivinhação</h1>
         <img id="image" src="" alt="Imagem para adivinhar" class="visible">
         <div>
@@ -118,6 +147,19 @@
 
         // Atualiza o nome do jogador na interface
         document.getElementById('playerName').textContent = playerName;
+
+        // Função para salvar o nick do jogador
+        const saveName = () => {
+            const nameInput = document.getElementById('nameInput').value.trim();
+            if (nameInput) {
+                playerName = nameInput;
+                localStorage.setItem('playerName', playerName); // Salva no localStorage
+                document.getElementById('playerName').textContent = playerName;
+                alert('Nick salvo com sucesso!');
+            } else {
+                alert('Por favor, digite um nick válido.');
+            }
+        };
 
         // Função para atualizar a imagem com animação
         const updateImage = (imageUrl) => {
