@@ -66,23 +66,20 @@
         .user-info p {
             margin: 5px 0;
         }
-        .room-options {
-            margin-top: 20px;
+        .attempts {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-align: left;
         }
-        .room-options button {
-            margin: 5px;
-        }
-        .ranking {
-            margin-top: 20px;
-        }
-        .ranking h3 {
+        .attempts h3 {
             margin: 0;
         }
-        .ranking ul {
+        .attempts ul {
             list-style-type: none;
             padding: 0;
         }
-        .ranking li {
+        .attempts li {
             margin: 5px 0;
         }
     </style>
@@ -92,6 +89,10 @@
         <h3>Jogador: <span id="playerName">Anônimo</span></h3>
         <p>Pontuação: <span id="score">0</span></p>
     </div>
+    <div class="attempts">
+        <h3>Tentativas</h3>
+        <ul id="attemptsList"></ul>
+    </div>
     <div class="container">
         <h1>Jogo de Adivinhação</h1>
         <img id="image" src="" alt="Imagem para adivinhar">
@@ -100,27 +101,32 @@
             <button onclick="submitGuess()">Enviar</button>
         </div>
         <div class="message" id="message"></div>
-        <div class="room-options">
-            <button onclick="createRoom()">Criar Sala</button>
-            <button onclick="joinRoom()">Entrar na Sala</button>
-        </div>
-        <div class="ranking">
-            <h3>Ranking Geral</h3>
-            <ul id="rankingList"></ul>
-        </div>
     </div>
 
     <script>
-        let playerName = "Anônimo";
+        let playerName = localStorage.getItem('playerName') || "Anônimo";
         let score = 0;
         let currentRoom = null;
 
+        // Atualiza o nome do jogador na interface
+        document.getElementById('playerName').textContent = playerName;
+
+        // Função para buscar a imagem atual
         async function fetchImage() {
             const response = await fetch('/get-image');
             const data = await response.json();
             document.getElementById('image').src = data.imageUrl;
         }
 
+        // Função para buscar as tentativas dos jogadores
+        async function fetchAttempts() {
+            const response = await fetch('/get-attempts');
+            const data = await response.json();
+            const attemptsList = document.getElementById('attemptsList');
+            attemptsList.innerHTML = data.map(attempt => `<li>${attempt.playerName}: ${attempt.guess}</li>`).join('');
+        }
+
+        // Função para enviar uma tentativa
         async function submitGuess() {
             const guess = document.getElementById('guess').value;
             const response = await fetch('/check-answer', {
@@ -128,58 +134,33 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ guess, room: currentRoom })
+                body: JSON.stringify({ guess, room: currentRoom, playerName })
             });
             const result = await response.json();
-            document.getElementById('message').textContent = result.message;
             if (result.correct) {
                 score += 10;
                 document.getElementById('score').textContent = score;
+                document.getElementById('message').textContent = result.message;
+                if (result.winner) {
+                    alert(result.message);
+                    // Reinicia o jogo
+                    score = 0;
+                    document.getElementById('score').textContent = score;
+                }
             }
+            fetchAttempts(); // Atualiza a lista de tentativas
         }
 
-        async function createRoom() {
-            const response = await fetch('/create-room', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ playerName })
-            });
-            const result = await response.json();
-            currentRoom = result.roomId;
-            alert(`Sala criada com ID: ${currentRoom}`);
-        }
+        // Atualiza a imagem e as tentativas a cada 10 segundos
+        setInterval(() => {
+            fetchImage();
+            fetchAttempts();
+        }, 10000);
 
-        async function joinRoom() {
-            const roomId = prompt("Digite o ID da sala:");
-            const response = await fetch('/join-room', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ roomId, playerName })
-            });
-            const result = await response.json();
-            if (result.success) {
-                currentRoom = roomId;
-                alert(`Você entrou na sala: ${roomId}`);
-            } else {
-                alert('Erro ao entrar na sala.');
-            }
-        }
-
-        async function fetchRanking() {
-            const response = await fetch('/get-ranking');
-            const data = await response.json();
-            const rankingList = document.getElementById('rankingList');
-            rankingList.innerHTML = data.map(player => `<li>${player.name}: ${player.score}</li>`).join('');
-        }
-
-        // Carrega a imagem e o ranking quando a página é carregada
+        // Carrega a imagem e as tentativas quando a página é carregada
         window.onload = () => {
             fetchImage();
-            fetchRanking();
+            fetchAttempts();
         };
     </script>
 </body>
