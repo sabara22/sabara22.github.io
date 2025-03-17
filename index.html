@@ -110,7 +110,7 @@
 
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
-        const socket = io('https://91d1-177-192-8-19.ngrok-free.app'); // Conecta ao servidor Socket.IO
+        const socket = io('https://91d1-177-192-8-19.ngrok-free.app'); // Altere para o link do ngrok se estiver compartilhando
 
         let playerName = localStorage.getItem('playerName') || "Anônimo";
         let score = 0;
@@ -121,10 +121,10 @@
         // Função para atualizar a imagem com animação
         const updateImage = (imageUrl) => {
             const imageElement = document.getElementById('image');
-            imageElement.classList.remove('visible'); // Remove a classe para iniciar a animação
+            imageElement.classList.remove('visible');
             setTimeout(() => {
                 imageElement.src = imageUrl;
-                imageElement.classList.add('visible'); // Adiciona a classe para mostrar a nova imagem
+                imageElement.classList.add('visible');
             }, 500); // Tempo para a transição de fade
         };
 
@@ -153,3 +153,35 @@
         const submitGuess = async () => {
             const guess = document.getElementById('guess').value;
             const response = await fetch('/check-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ guess, playerName })
+            });
+            const result = await response.json();
+            if (result.correct) {
+                score += 10;
+                document.getElementById('score').textContent = score;
+                document.getElementById('message').textContent = result.message;
+                if (result.winner) {
+                    alert(result.message);
+                    score = 0;
+                    document.getElementById('score').textContent = score;
+                }
+            }
+        };
+
+        // Carrega a imagem e as tentativas quando a página é carregada
+        window.onload = () => {
+            fetch('/get-image')
+                .then(response => response.json())
+                .then(data => updateImage(data.imageUrl));
+
+            fetch('/get-attempts')
+                .then(response => response.json())
+                .then(data => updateAttempts(data));
+        };
+    </script>
+</body>
+</html>
