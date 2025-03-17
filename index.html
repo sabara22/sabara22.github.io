@@ -5,7 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo de Adivinhação</title>
     <style>
-        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        img.visible {
+            opacity: 1;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+        }
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+        }
+        .user-info h3 {
+            margin: 0;
+        }
+        .user-info p {
+            margin: 5px 0;
+        }
+        .attempts {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-align: left;
+        }
+        .attempts h3 {
+            margin: 0;
+        }
+        .attempts ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .attempts li {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -29,7 +110,8 @@
 
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
-        const socket = io('https://91d1-177-192-8-19.ngrok-free.app'); // Altere para o link do ngrok se estiver compartilhando
+        const backendUrl = 'https://91d1-177-192-8-19.ngrok-free.app'; // Link do ngrok
+        const socket = io(backendUrl); // Conecta ao backend via Socket.IO
 
         let playerName = localStorage.getItem('playerName') || "Anônimo";
         let score = 0;
@@ -37,10 +119,41 @@
         // Atualiza o nome do jogador na interface
         document.getElementById('playerName').textContent = playerName;
 
+        // Função para atualizar a imagem com animação
+        const updateImage = (imageUrl) => {
+            const imageElement = document.getElementById('image');
+            imageElement.classList.remove('visible');
+            setTimeout(() => {
+                imageElement.src = imageUrl;
+                imageElement.classList.add('visible');
+            }, 500); // Tempo para a transição de fade
+        };
+
+        // Função para atualizar as tentativas
+        const updateAttempts = (attempts) => {
+            const attemptsList = document.getElementById('attemptsList');
+            attemptsList.innerHTML = attempts.map(attempt => `<li>${attempt.playerName}: ${attempt.guess}</li>`).join('');
+        };
+
+        // Escuta eventos do servidor
+        socket.on('image-changed', (data) => {
+            updateImage(data.imageUrl); // Atualiza a imagem com animação
+        });
+
+        socket.on('attempt-updated', (attempts) => {
+            updateAttempts(attempts); // Atualiza as tentativas
+        });
+
+        socket.on('player-won', (data) => {
+            alert(`${data.playerName} venceu o jogo!`);
+            score = 0; // Reinicia a pontuação
+            document.getElementById('score').textContent = score;
+        });
+
         // Função para enviar uma tentativa
         const submitGuess = async () => {
             const guess = document.getElementById('guess').value;
-            const response = await fetch('/check-answer', {
+            const response = await fetch(`${backendUrl}/check-answer`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -62,11 +175,11 @@
 
         // Carrega a imagem e as tentativas quando a página é carregada
         window.onload = () => {
-            fetch('/get-image')
+            fetch(`${backendUrl}/get-image`)
                 .then(response => response.json())
                 .then(data => updateImage(data.imageUrl));
 
-            fetch('/get-attempts')
+            fetch(`${backendUrl}/get-attempts`)
                 .then(response => response.json())
                 .then(data => updateAttempts(data));
         };
