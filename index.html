@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo de Adivinhação</title>
+    <script src="/socket.io/socket.io.js"></script>
     <style>
         body {
             background-color: black;
@@ -21,14 +22,11 @@
             border: 2px solid white;
             margin-bottom: 10px;
         }
-        input {
+        input, button {
             padding: 10px;
-            width: 80%;
             font-size: 16px;
         }
         button {
-            padding: 10px;
-            font-size: 16px;
             background: white;
             color: black;
             border: none;
@@ -43,7 +41,11 @@
 <body>
     <div class="container">
         <h1>Jogo de Adivinhação</h1>
-        <img id="game-image" src="https://via.placeholder.com/500" alt="Imagem do jogo">
+        <input type="text" id="room" placeholder="Nome da Sala">
+        <input type="text" id="playerName" placeholder="Seu Nome">
+        <button onclick="joinGame()">Entrar</button>
+        <br>
+        <img id="game-image" src="" alt="Imagem do jogo">
         <br>
         <input type="text" id="answer" placeholder="Digite sua resposta">
         <button onclick="sendAnswer()">Enviar</button>
@@ -53,11 +55,37 @@
         </div>
     </div>
     <script>
+        const socket = io();
+        let currentRoom = "";
+
+        function joinGame() {
+            const room = document.getElementById('room').value;
+            const name = document.getElementById('playerName').value;
+            if (room && name) {
+                currentRoom = room;
+                socket.emit('joinRoom', { room, name });
+            }
+        }
+
+        socket.on('newImage', (imageUrl) => {
+            document.getElementById('game-image').src = imageUrl;
+        });
+
         function sendAnswer() {
             let answer = document.getElementById('answer').value;
-            console.log('Resposta enviada:', answer);
+            socket.emit('sendAnswer', { room: currentRoom, answer });
             document.getElementById('answer').value = '';
         }
+
+        socket.on('updateRanking', (ranking) => {
+            let rankingList = document.getElementById('ranking-list');
+            rankingList.innerHTML = '';
+            ranking.forEach(player => {
+                let li = document.createElement('li');
+                li.textContent = `${player.name}: ${player.score} pontos`;
+                rankingList.appendChild(li);
+            });
+        });
     </script>
 </body>
 </html>
