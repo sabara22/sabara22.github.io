@@ -25,6 +25,11 @@
             height: auto;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        img.visible {
+            opacity: 1;
         }
         input[type="text"] {
             padding: 10px;
@@ -95,7 +100,7 @@
     </div>
     <div class="container">
         <h1>Jogo de Adivinhação</h1>
-        <img id="image" src="" alt="Imagem para adivinhar">
+        <img id="image" src="" alt="Imagem para adivinhar" class="visible">
         <div>
             <input type="text" id="guess" placeholder="Digite sua resposta">
             <button onclick="submitGuess()">Enviar</button>
@@ -103,65 +108,48 @@
         <div class="message" id="message"></div>
     </div>
 
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
+        const socket = io(); // Conecta ao servidor Socket.IO
+
         let playerName = localStorage.getItem('playerName') || "Anônimo";
         let score = 0;
-        let currentRoom = null;
 
         // Atualiza o nome do jogador na interface
         document.getElementById('playerName').textContent = playerName;
 
-        // Função para buscar a imagem atual
-        async function fetchImage() {
-            const response = await fetch('/get-image');
-            const data = await response.json();
-            document.getElementById('image').src = data.imageUrl;
-        }
+        // Função para atualizar a imagem com animação
+        const updateImage = (imageUrl) => {
+            const imageElement = document.getElementById('image');
+            imageElement.classList.remove('visible'); // Remove a classe para iniciar a animação
+            setTimeout(() => {
+                imageElement.src = imageUrl;
+                imageElement.classList.add('visible'); // Adiciona a classe para mostrar a nova imagem
+            }, 500); // Tempo para a transição de fade
+        };
 
-        // Função para buscar as tentativas dos jogadores
-        async function fetchAttempts() {
-            const response = await fetch('/get-attempts');
-            const data = await response.json();
+        // Função para atualizar as tentativas
+        const updateAttempts = (attempts) => {
             const attemptsList = document.getElementById('attemptsList');
-            attemptsList.innerHTML = data.map(attempt => `<li>${attempt.playerName}: ${attempt.guess}</li>`).join('');
-        }
+            attemptsList.innerHTML = attempts.map(attempt => `<li>${attempt.playerName}: ${attempt.guess}</li>`).join('');
+        };
+
+        // Escuta eventos do servidor
+        socket.on('image-changed', (data) => {
+            updateImage(data.imageUrl); // Atualiza a imagem com animação
+        });
+
+        socket.on('attempt-updated', (attempts) => {
+            updateAttempts(attempts); // Atualiza as tentativas
+        });
+
+        socket.on('player-won', (data) => {
+            alert(`${data.playerName} venceu o jogo!`);
+            score = 0; // Reinicia a pontuação
+            document.getElementById('score').textContent = score;
+        });
 
         // Função para enviar uma tentativa
-        async function submitGuess() {
+        const submitGuess = async () => {
             const guess = document.getElementById('guess').value;
             const response = await fetch('/check-answer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ guess, room: currentRoom, playerName })
-            });
-            const result = await response.json();
-            if (result.correct) {
-                score += 10;
-                document.getElementById('score').textContent = score;
-                document.getElementById('message').textContent = result.message;
-                if (result.winner) {
-                    alert(result.message);
-                    // Reinicia o jogo
-                    score = 0;
-                    document.getElementById('score').textContent = score;
-                }
-            }
-            fetchAttempts(); // Atualiza a lista de tentativas
-        }
-
-        // Atualiza a imagem e as tentativas a cada 10 segundos
-        setInterval(() => {
-            fetchImage();
-            fetchAttempts();
-        }, 10000);
-
-        // Carrega a imagem e as tentativas quando a página é carregada
-        window.onload = () => {
-            fetchImage();
-            fetchAttempts();
-        };
-    </script>
-</body>
-</html>
